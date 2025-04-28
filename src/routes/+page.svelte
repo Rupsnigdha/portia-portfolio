@@ -33,7 +33,7 @@
 		return () => {
 			// Ensure scroll is re-enabled when component is destroyed
 			document.body.classList.remove('no-scroll');
-		}
+		};
 	});
 
 	function openImageOverlay(image: string) {
@@ -107,17 +107,19 @@
 
 <!-- Image Overlay -->
 {#if showOverlay}
-<div 
-	class="fixed inset-0 bg-black/80 z-50 flex justify-center p-4 md:p-8 cursor-pointer" 
-	onclick={closeImageOverlay}
-	transition:fade={{ duration: 200 }}
->
-		<img 
-            src={selectedImage} 
-            alt="Selected work" 
-            onclick={(e) => {e.preventDefault()}}
-            class="max-w-full max-h-full object-contain cursor-default" 
-        />
+	<div
+		class="fixed inset-0 z-50 flex cursor-pointer justify-center bg-black/80 p-4 md:p-8"
+		onclick={closeImageOverlay}
+		transition:fade={{ duration: 200 }}
+	>
+		<img
+			src={selectedImage}
+			alt="Selected work"
+			onclick={(e) => {
+				e.preventDefault();
+			}}
+			class="max-h-full max-w-full cursor-default object-contain"
+		/>
 	</div>
 {/if}
 
@@ -126,13 +128,19 @@
 		<p class="">Hey, I'm</p>
 		<h2 class="font-lora mb-4 text-4xl">Portia</h2>
 		<p class="max-w-sm text-[#CA8E82]">
-			Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fuga asperiores, optio in illo
-			dolorum modi quam excepturi fugit ipsa vero dolor debitis incidunt recusandae, nisi
-			consectetur dolorem, nostrum dicta. Facilis.
+			A digital artist and creator. I primarily use Figma and Adobe Creative Suite to create my
+			work. I have experience designing social media posts and posters. Additionally, I am capable
+			of creating digital bookmark designs, t-shirts, and other forms of digital art.
 		</p>
 		<a
 			href="#showcase"
 			class="font-lora relative mt-4 block self-start bg-[#A75F37] px-8 py-2 text-[#f2e7dd] transition-all hover:bg-[#8d441d]"
+			onclick={(e) => {
+				e.preventDefault();
+				document.getElementById('showcase').scrollIntoView({
+					behavior: 'smooth'
+				});
+			}}
 			>View my works!
 			<div class="absolute top-1 -right-1 -z-10 h-full w-full bg-[#CA8E82]"></div>
 		</a>
@@ -141,7 +149,7 @@
 
 <section id="showcase" class="container mx-auto px-4 py-20">
 	<h2 class="font-lora mb-4 text-4xl text-[#A75F37]">Portfolio</h2>
-	<div class="mt-4 flex gap-4 flex-wrap" >
+	<div class="mt-4 flex flex-wrap gap-4">
 		{#each categories as category}
 			<button
 				class="font-lora relative block cursor-pointer bg-[#A75F37] px-4 py-1 text-[#f2e7dd] transition-colors hover:bg-[#8d441d]"
@@ -154,20 +162,28 @@
 			</button>
 		{/each}
 	</div>
-	<div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-		{#each designs.filter(design => activeCategory === 'All' || design.category.includes(activeCategory)) as design (design.img)}
-				<div 
-					class="w-full h-auto aspect-square overflow-hidden border border-[#A75F37] hover:bg-[#CA8E82] cursor-pointer transition-all p-8 md:p-4 xl:p-6 2xl:p-8"
-					onclick={() => openImageOverlay(design.img)}
-				>
-					<div class="w-full h-full relative">
-						<div class="absolute w-full h-0.25 top-0 z-10 bg-[#A75F37] transform scale-x-105 origin-center"></div>
-						<div class="absolute w-full h-0.25 bottom-0 z-10 bg-[#A75F37] transform scale-x-105 origin-center"></div>
-						<div class="absolute h-full w-0.25 left-0 z-10 bg-[#A75F37] transform scale-y-105 origin-center"></div>
-						<div class="absolute h-full w-0.25 right-0 z-10 bg-[#A75F37] transform scale-y-105 origin-center"></div>
-						<img src={design.img} alt="" class="object-cover w-full h-full" />
-					</div>
+	<div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+		{#each designs.filter((design) => activeCategory === 'All' || design.category.includes(activeCategory)) as design (design.img)}
+			<div
+				class="aspect-square h-auto w-full cursor-pointer overflow-hidden border border-[#A75F37] p-8 transition-all hover:bg-[#CA8E82] md:p-4 xl:p-6 2xl:p-8"
+				onclick={() => openImageOverlay(design.img)}
+			>
+				<div class="relative h-full w-full">
+					<div
+						class="absolute top-0 z-10 h-0.25 w-full origin-center scale-x-105 transform bg-[#A75F37]"
+					></div>
+					<div
+						class="absolute bottom-0 z-10 h-0.25 w-full origin-center scale-x-105 transform bg-[#A75F37]"
+					></div>
+					<div
+						class="absolute left-0 z-10 h-full w-0.25 origin-center scale-y-105 transform bg-[#A75F37]"
+					></div>
+					<div
+						class="absolute right-0 z-10 h-full w-0.25 origin-center scale-y-105 transform bg-[#A75F37]"
+					></div>
+					<img src={design.img} alt="" class="h-full w-full object-cover" />
 				</div>
+			</div>
 		{/each}
 	</div>
 </section>
@@ -176,7 +192,7 @@
 	.chip-highlight {
 		background-color: #8d441d;
 	}
-	
+
 	:global(body.no-scroll) {
 		overflow: hidden;
 	}
