@@ -127,7 +127,7 @@
 	<div class="flex flex-col">
 		<p class="">Hey, I'm</p>
 		<h2 class="font-lora mb-4 text-4xl">Portia</h2>
-		<p class="max-w-sm text-[#CA8E82]">
+		<p class="max-w-sm md:max-w-md text-[#CA8E82]">
 			A digital artist and creator. I primarily use Figma and Adobe Creative Suite to create my
 			work. I have experience designing social media posts and posters. Additionally, I am capable
 			of creating digital bookmark designs, t-shirts, and other forms of digital art.
