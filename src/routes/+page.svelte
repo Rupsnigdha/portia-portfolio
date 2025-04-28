@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fade, scale } from 'svelte/transition';
+	import { onMount } from 'svelte';
 	import Img1 from '$lib/assets/1.jpeg';
 	import Img2 from '$lib/assets/2.png';
 	import Img3 from '$lib/assets/3.png';
@@ -23,6 +25,30 @@
 	];
 
 	let activeCategory = $state('All');
+	let showOverlay = $state(false);
+	let selectedImage = $state('');
+
+	// Add this for controlling body scroll
+	onMount(() => {
+		return () => {
+			// Ensure scroll is re-enabled when component is destroyed
+			document.body.classList.remove('no-scroll');
+		}
+	});
+
+	function openImageOverlay(image: string) {
+		selectedImage = image;
+		showOverlay = true;
+		// Disable scroll
+		document.body.classList.add('no-scroll');
+	}
+
+	function closeImageOverlay() {
+		showOverlay = false;
+		// Re-enable scroll
+		document.body.classList.remove('no-scroll');
+	}
+
 	interface Design {
 		img: string;
 		category: string[];
@@ -79,6 +105,22 @@
 	];
 </script>
 
+<!-- Image Overlay -->
+{#if showOverlay}
+<div 
+	class="fixed inset-0 bg-black/80 z-50 flex justify-center p-4 md:p-8 cursor-pointer" 
+	onclick={closeImageOverlay}
+	transition:fade={{ duration: 200 }}
+>
+		<img 
+            src={selectedImage} 
+            alt="Selected work" 
+            onclick={(e) => {e.preventDefault()}}
+            class="max-w-full max-h-full object-contain cursor-default" 
+        />
+	</div>
+{/if}
+
 <section class="container mx-auto flex h-screen items-center px-4 text-[#A75F37]">
 	<div class="flex flex-col">
 		<p class="">Hey, I'm</p>
@@ -97,7 +139,7 @@
 	</div>
 </section>
 
-<section id="showcase" class="container mx-auto px-4 py-20 mb-12">
+<section id="showcase" class="container mx-auto px-4 py-20">
 	<h2 class="font-lora mb-4 text-4xl text-[#A75F37]">Portfolio</h2>
 	<div class="mt-4 flex gap-4 flex-wrap" >
 		{#each categories as category}
@@ -113,23 +155,29 @@
 		{/each}
 	</div>
 	<div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-		{#each designs as design}
-        <div class="w-full h-auto aspect-square overflow-hidden border border-[#A75F37] hover:bg-[#CA8E82] cursor-pointer transition-all p-8 md:p-4 xl:p-6 2xl:p-8">
-            <div class="w-full h-full relative">
-                <div class="absolute w-full h-0.25 top-0 z-10 bg-[#A75F37] transform scale-x-105 origin-center"></div>
-                <div class="absolute w-full h-0.25 bottom-0 z-10 bg-[#A75F37] transform scale-x-105 origin-center"></div>
-                <div class="absolute h-full w-0.25 left-0 z-10 bg-[#A75F37] transform scale-y-105 origin-center"></div>
-                <div class="absolute h-full w-0.25 right-0 z-10 bg-[#A75F37] transform scale-y-105 origin-center"></div>
-                <img src={design.img} alt="" class="object-cover w-full h-full" />
-            </div>
-        </div>
+		{#each designs.filter(design => activeCategory === 'All' || design.category.includes(activeCategory)) as design (design.img)}
+				<div 
+					class="w-full h-auto aspect-square overflow-hidden border border-[#A75F37] hover:bg-[#CA8E82] cursor-pointer transition-all p-8 md:p-4 xl:p-6 2xl:p-8"
+					onclick={() => openImageOverlay(design.img)}
+				>
+					<div class="w-full h-full relative">
+						<div class="absolute w-full h-0.25 top-0 z-10 bg-[#A75F37] transform scale-x-105 origin-center"></div>
+						<div class="absolute w-full h-0.25 bottom-0 z-10 bg-[#A75F37] transform scale-x-105 origin-center"></div>
+						<div class="absolute h-full w-0.25 left-0 z-10 bg-[#A75F37] transform scale-y-105 origin-center"></div>
+						<div class="absolute h-full w-0.25 right-0 z-10 bg-[#A75F37] transform scale-y-105 origin-center"></div>
+						<img src={design.img} alt="" class="object-cover w-full h-full" />
+					</div>
+				</div>
 		{/each}
-		
 	</div>
 </section>
 
 <style>
 	.chip-highlight {
 		background-color: #8d441d;
+	}
+	
+	:global(body.no-scroll) {
+		overflow: hidden;
 	}
 </style>
