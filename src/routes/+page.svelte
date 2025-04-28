@@ -96,11 +96,11 @@
 		},
 		{
 			img: Img11,
-			category: ['UI']
+			category: ['Typography']
 		},
 		{
 			img: Img12,
-			category: ['Typography']
+			category: ['UI']
 		}
 	];
 </script>
